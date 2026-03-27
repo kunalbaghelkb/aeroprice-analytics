@@ -134,13 +134,11 @@ curl -X POST "http://127.0.0.1:8000/predict" \
 ---
 
 ## Response (JSON)
-    ```bash
     {
     "predicted_price": 11372.4,
     "currency": "USD",
     "source": "model"
     }
-    ```
 
 > **Note:** Subsequent identical requests will return `"source": "cache"` with near-zero latency.
 
