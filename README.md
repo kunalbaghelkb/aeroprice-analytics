@@ -134,7 +134,7 @@ curl -X POST "http://127.0.0.1:8000/predict" \
 ---
 
 ## Response (JSON)
-    ```json
+    ```bash
     {
     "predicted_price": 11372.4,
     "currency": "USD",
@@ -149,6 +149,6 @@ curl -X POST "http://127.0.0.1:8000/predict" \
 ## 👨‍💻 Author
 **Kunal Baghel**
 
-*Aspiring Data Scientist & AI Engineer*
+*Associate Data Scientist & AI/ML Engineer*
 
 [LinkedIn](https://linkedin.com/in/kunalbaghelz) | [GitHub](http://github.com/kunalbaghelkb)
