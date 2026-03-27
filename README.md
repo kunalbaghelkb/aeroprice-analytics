@@ -69,7 +69,7 @@ The project follows a modular, production-ready structure:
 
 1. Clone the Repository
     ```bash
-    git clone https://github.com/your-username/aeroprice-analytics.git && cd aeroprice-analytics
+    git clone https://github.com/kunalbaghelkb/aeroprice-analytics.git && cd aeroprice-analytics
 
 2. Create Virtual Environment
     ```bash
@@ -135,9 +135,9 @@ curl -X POST "http://127.0.0.1:8000/predict" \
 
 ## Response (JSON)
     {
-    "predicted_price": 11372.4,
-    "currency": "USD",
-    "source": "model"
+        "predicted_price": 11372.4,
+        "currency": "USD",
+        "source": "model"
     }
 
 > **Note:** Subsequent identical requests will return `"source": "cache"` with near-zero latency.
@@ -147,6 +147,6 @@ curl -X POST "http://127.0.0.1:8000/predict" \
 ## 👨‍💻 Author
 **Kunal Baghel**
 
-*Associate Data Scientist & AI/ML Engineer*
+*Associate Data Scientist / ML Engineer*
 
-[LinkedIn](https://linkedin.com/in/kunalbaghelz) | [GitHub](http://github.com/kunalbaghelkb)
+[LinkedIn](https://linkedin.com/in/kunalbaghelz) | [GitHub](http://github.com/kunalbaghelkb) | [Portfolio](https://kunalbaghel.vercel.app)

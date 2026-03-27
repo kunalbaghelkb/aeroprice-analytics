@@ -1,7 +1,5 @@
 pandas
 numpy
-matplotlib
-seaborn
 scikit-learn
 statsmodels
 xgboost
@@ -12,5 +10,4 @@ typing
 redis
 fastapi
 uvicorn
-ipykernel
 python-dotenv

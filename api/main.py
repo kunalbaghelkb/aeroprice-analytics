@@ -1,38 +1,61 @@
+import os
 import pandas as pd
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Security, Header
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+
 from api.schemas import CarPredictionRequest, CarPredictionResponse
 from api.redis_cache import RedisCache
 from src.pipelines.predict_pipeline import PredictPipeline
 from src.logger import logging
 
-# Initialize FastAPI App
+# Load environment variables
+load_dotenv()
+
+# SECURITY SETUP: API KEY VALIDATION
+# Fetch secret from .env (Hugging Face Secrets later). Fallback is for local dev only.
+API_SECRET_KEY = os.getenv("AEROPRICE_API_KEY")
+
+def verify_api_key(x_api_key: str = Header(None)):
+    if not x_api_key or x_api_key != API_SECRET_KEY:
+        logging.warning("Unauthorized API access attempt blocked!")
+        raise HTTPException(status_code=401, detail="Unauthorized: Invalid or Missing API Key")
+    return x_api_key
+
+# INITIALIZE APP
 app = FastAPI(
-    title="Used Car Dynamic Pricing Engine",
-    description="ML-powered API with Redis caching for real-time car valuations.",
+    title="AeroPrice Analytics API",
+    description="ML-powered API with Redis caching and strict API Key security.",
     version="1.0.0"
 )
 
-# CORS Setup (Crucial for Vercel Frontend to communicate with this API)
+# CORS SETUP (Production Ready)
+# In production, set ALLOWED_ORIGIN in your .env to your Vercel URL
+allowed_origin = os.getenv("ALLOWED_ORIGIN", "*") 
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, replace "*" with your Vercel React/Next.js domain
+    allow_origins=[allowed_origin],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["*", "x-api-key"],
 )
 
 # Initialize singletons at startup
-logging.info("Booting up the Pricing Engine API...")
+logging.info("Booting up the Secure Pricing Engine API...")
 predict_pipeline = PredictPipeline()
 cache = RedisCache()
 
+# ROUTES
 @app.get("/")
 def read_root():
-    return {"status": "Active", "model": "XGBoost Tuned", "caching": "Enabled (Fallback Mode)"}
+    return {"status": "Active", "model": "XGBoost Tuned", "security": "API Key Required"}
 
 @app.post("/predict", response_model=CarPredictionResponse)
-def predict_car_price(request_data: CarPredictionRequest):
+def predict_car_price(
+    request_data: CarPredictionRequest,
+    api_key: str = Security(verify_api_key)
+):
     try:
         input_dict = request_data.dict()
         
@@ -44,10 +67,7 @@ def predict_car_price(request_data: CarPredictionRequest):
             return CarPredictionResponse(predicted_price=cached_price, source="cache")
         
         # Cache Miss: Run ML Pipeline
-        # Convert dict to Pandas DataFrame (as expected by PredictPipeline)
         input_df = pd.DataFrame([input_dict])
-        
-        # Get prediction from our trained XGBoost model
         predicted_price = predict_pipeline.predict(input_df)
         final_price = round(predicted_price, 2)
         

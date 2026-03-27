@@ -5,15 +5,24 @@ import mlflow.xgboost
 from xgboost import XGBRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
+from dotenv import load_dotenv
+
 from src.logger import logging
 from src.constants import MODEL_DIR
 
+# Load environment variables from .env file
+load_dotenv()
+
 class ModelTrainer:
     def __init__(self):
-        # Add DagsHub's URI
-        # mlflow.set_tracking_uri("YOUR_DAGSHUB_MLFLOW_URI")
-        # mlflow.set_experiment("Used_Car_Pricing_XGBoost")
-        pass
+        # Fetch DagsHub URI from .env securely
+        tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
+        if tracking_uri:
+            mlflow.set_tracking_uri(tracking_uri)
+            mlflow.set_experiment("AeroPrice_Analytics_XGBoost")
+            logging.info("MLflow tracking URI set successfully!")
+        else:
+            logging.warning("MLFLOW_TRACKING_URI not found in .env. Tracking might fail.")
 
     def evaluate_model(self, true, predicted):
         rmse = np.sqrt(mean_squared_error(true, predicted))
@@ -38,21 +47,22 @@ class ModelTrainer:
             model = XGBRegressor(**best_params)
 
             # MLflow Tracking Start
-            # with mlflow.start_run():
-            logging.info("Training the model...")
-            model.fit(X_train, y_train)
+            with mlflow.start_run():
+                logging.info("Training the model...")
+                model.fit(X_train, y_train)
 
-            logging.info("Predicting on Test Data...")
-            y_pred = model.predict(X_test)
+                logging.info("Predicting on Test Data...")
+                y_pred = model.predict(X_test)
 
-            rmse, r2 = self.evaluate_model(y_test, y_pred)
-            logging.info(f"Model Performance - RMSE: {rmse}, R2: {r2}")
+                rmse, r2 = self.evaluate_model(y_test, y_pred)
+                logging.info(f"Model Performance - RMSE: {rmse}, R2: {r2}")
 
-            # Logging params and metrics to MLflow
-            # mlflow.log_params(best_params)
-            # mlflow.log_metric("rmse", rmse)
-            # mlflow.log_metric("r2", r2)
-            # mlflow.xgboost.log_model(model, "xgboost_model")
+                # Logging params, metrics, and the model itself to DagsHub Cloud
+                logging.info("Logging experiment data to DagsHub (MLflow)...")
+                mlflow.log_params(best_params)
+                mlflow.log_metric("rmse", rmse)
+                mlflow.log_metric("r2", r2)
+                mlflow.xgboost.log_model(model, "xgboost_model")
             # MLflow Tracking End
 
             # Save the model locally in models/ directory
