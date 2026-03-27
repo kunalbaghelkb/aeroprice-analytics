@@ -35,7 +35,7 @@ To run this project locally, you will need to download the following datasets an
 ### Insurance Fraud Detection Dataset (CSV)
 This dataset is used to train the model for predicting vehicle price.
 - **Source:** Kaggle (Craigslist Cars and Trucks Data)
-- **Download Link:** [Click Here to Download CSV](https://www.kaggle.com/datasets/prena0808/craigslist-cars-and-trucks-data)
+- **Download Link:** [Click Here to Download CSV](https://www.kaggle.com/datasets/austinreese/craigslist-carstrucks-data)
 - **Placement:** Extract the file `vehicles.csv` inside `data/raw/`.
 
 ---

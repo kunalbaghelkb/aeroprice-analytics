@@ -1,9 +1,10 @@
 from pydantic import BaseModel, Field
 from typing import Optional
+from datetime import datetime
 
 class CarPredictionRequest(BaseModel):
     # Core numerical features
-    year: int = Field(..., ge=1990, le=2025, description="Manufacturing year of the car")
+    year: int = Field(..., ge=1990, le=datetime.now().year + 1, description="Manufacturing year of the car")
     odometer: float = Field(..., ge=0, description="Miles driven")
     
     # Categorical features (with explicit examples for Swagger UI)
