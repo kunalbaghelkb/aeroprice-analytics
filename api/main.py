@@ -79,3 +79,8 @@ def predict_car_price(
     except Exception as e:
         logging.error(f"API Error during prediction: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal Server Error during prediction.")
+
+# Health Check Endpoint (To keep awake api on Hugging Face)
+@app.get("/health")
+def health_check():
+    return {"status": "awake", "message": "AeroPrice API is running!"}
