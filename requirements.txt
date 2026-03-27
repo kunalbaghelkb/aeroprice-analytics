@@ -1,0 +1,15 @@
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+statsmodels
+xgboost
+jinja2
+mlflow
+pydantic
+typing
+redis
+fastapi
+uvicorn
+ipykernel
