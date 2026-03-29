@@ -14,3 +14,4 @@ fastapi
 uvicorn
 ipykernel
 python-dotenv
+python-multipart
