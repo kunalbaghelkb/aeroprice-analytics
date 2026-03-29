@@ -26,3 +26,20 @@ class CarPredictionResponse(BaseModel):
     predicted_price: float
     currency: str = "USD"
     source: str = "model" # Will return "cache" if data comes from Redis
+
+class BatchPredictionItem(BaseModel):
+    id: int
+    manufacturer: str
+    model: str
+    year: int
+    odometer: float
+    predicted_price: float
+    status: str = "Good" # "Good", "High Profit", "Loss Leader"
+    confidence: Optional[float] = 0.95
+
+class BatchPredictionResponse(BaseModel):
+    total_inventory_value: float
+    top_profitable: list[BatchPredictionItem]
+    loss_leaders: list[BatchPredictionItem]
+    predictions: list[BatchPredictionItem]
+    processed_count: int

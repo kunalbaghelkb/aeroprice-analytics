@@ -1,6 +1,7 @@
 import os
 import joblib
 import pandas as pd
+import numpy as np
 from src.logger import logging
 from src.constants import MODEL_DIR
 
@@ -19,24 +20,31 @@ class PredictPipeline:
 
     def predict(self, input_dataframe):
         try:
-            logging.info("Starting Prediction Pipeline...")
+            logging.info(f"Starting Prediction Pipeline for {len(input_dataframe)} rows...")
             
             # Step 1: Preprocess the raw input (OHE, Target Encoding, Imputation)
             processed_df = self.preprocessor.transform(input_dataframe)
             
             # Step 2: Ensure column mismatch doesn't happen (Reindexing)
-            # This fills any missing OHE columns (e.g., other car brands) with 0
             processed_df = processed_df.reindex(columns=self.training_cols, fill_value=0)
             
             # Step 3: Scale the data
             scaled_array = self.scaler.transform(processed_df)
             scaled_df = pd.DataFrame(scaled_array, columns=self.training_cols)
             
-            # Step 4: Predict
-            prediction = self.model.predict(scaled_df)[0]
+            # Step 4: Predict for all rows
+            predictions = self.model.predict(scaled_df)
             
-            logging.info(f"Prediction successful: ${prediction}")
-            return max(500.0, float(prediction))
+            # Post-process and floor results to $500 min
+            results = [max(500.0, float(p)) for p in predictions]
+            
+            logging.info(f"Batch prediction successful for {len(results)} items.")
+            
+            # Return single float for single row (backward compatibility)
+            if len(results) == 1:
+                return results[0]
+            
+            return results
             
         except Exception as e:
             logging.error(f"Error during prediction: {e}")
