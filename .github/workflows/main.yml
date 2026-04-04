@@ -13,7 +13,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # 1. Robot ka identity setup
+          # 1. Robot's identity setup
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
 
@@ -21,7 +21,14 @@ jobs:
           git clone https://kunal-baghel:$HF_TOKEN@huggingface.co/spaces/kunal-baghel/AeroPrice-API hf_space
 
           # 3. Copy New Code without deleting HF Space or .git folder
-          rsync -av --exclude='.git' --exclude='.github' ./ hf_space/
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='README.md' \
+            --exclude='hf_space/' \
+            --exclude='notebook/' \
+            --exclude='notebooks/' \
+            ./ hf_space/
 
           # 4. Get Dynamic Commit Message from the Latest Commit
           cd hf_space

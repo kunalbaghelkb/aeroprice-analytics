@@ -83,7 +83,7 @@ class TrainPipeline:
             logging.error(f"Pipeline failed: {e}")
             raise e
 
-# Run the pipeline
+# Run Training pipeline
 if __name__ == "__main__":
     pipeline = TrainPipeline()
     pipeline.run_pipeline()
