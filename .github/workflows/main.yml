@@ -28,6 +28,7 @@ jobs:
             --exclude='hf_space/' \
             --exclude='notebook/' \
             --exclude='notebooks/' \
+            --exclude='.gitignore' \
             ./ hf_space/
 
           # 4. Get Dynamic Commit Message from the Latest Commit
