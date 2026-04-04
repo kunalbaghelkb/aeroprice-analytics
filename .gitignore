@@ -37,6 +37,3 @@ env/
 .idea/
 .DS_Store
 Thumbs.db
-
-# Temporary Untracked files
-.github/workflows/main.yml
